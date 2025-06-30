@@ -1,5 +1,8 @@
 FROM python:3.11-slim
 
+# Actualiza los paquetes del sistema para reducir vulnerabilidades
+RUN apt-get update && apt-get upgrade -y && apt-get clean
+
 WORKDIR /app
 
 # Copiar requirements y instalar dependencias

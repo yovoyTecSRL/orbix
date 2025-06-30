@@ -1,4 +1,6 @@
-{
+# Orbix Payment Validation manifest for Odoo
+
+__manifest__ = {
     'name': 'Orbix Payment Validation',
     'version': '16.0.1.0.0',
     'category': 'Accounting/Payment',
