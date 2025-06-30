@@ -40,7 +40,7 @@ services:
     depends_on:
       - postgres
     ports:
-      - "8069:8069"
+      - "8070:8069"
     environment:
       - HOST=postgres
       - USER=odoo
