@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  # Servicio principal de Orbix AI
+  orbix:
+    build: .
+    container_name: orbix-ai
+    ports:
+      - "80:8000"
+    env_file:
+      - .env
+    restart: always
+    volumes:
+      - ./orbix_config.json:/app/orbix_config.json:ro
+    depends_on:
+      - postgres
+    networks:
+      - orbix-network
+
+  # Base de datos PostgreSQL para Odoo
+  postgres:
+    image: postgres:13
+    container_name: orbix-postgres
+    environment:
+      POSTGRES_DB: odoo
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo_password_2025
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: always
+    networks:
+      - orbix-network
+
+  # Odoo para testing de validaciones de tarjetas (Babel)
+  odoo:
+    image: odoo:16.0
+    container_name: orbix-odoo
+    depends_on:
+      - postgres
+    ports:
+      - "8069:8069"
+    environment:
+      - HOST=postgres
+      - USER=odoo
+      - PASSWORD=odoo_password_2025
+    volumes:
+      - odoo_web_data:/var/lib/odoo
+      - ./odoo_config:/etc/odoo
+      - ./odoo_addons:/mnt/extra-addons
+    restart: always
+    networks:
+      - orbix-network
+    command: -- --database=odoo --db_host=postgres --db_port=5432 --db_user=odoo --db_password=odoo_password_2025
+
+volumes:
+  postgres_data:
+  odoo_web_data:
+
+networks:
+  orbix-network:
+    driver: bridge

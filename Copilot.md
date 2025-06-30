@@ -133,14 +133,43 @@ curl http://localhost/health
 curl -X POST http://localhost/cotizar -H "Content-Type: application/json" -d '{"tipo_solucion":"API","horas_estimadas":100,"cliente_es_banco":false}'
 ```
 
-## 🧪 Testing automático
+## 🧪 Testing automatizado implementado
 
-Ejecuta después del deploy:
+✅ **SCRIPT DE TESTING COMPLETO:**
+- **Archivo:** `test_deployment.sh`
+- **Ejecución:** Automática al final de cada deployment
+- **Endpoints testeados:** `/`, `/health`, `/docs`, `/cotizar`
+- **Diagnósticos:** Colores, códigos HTTP, troubleshooting
+- **Output:** Resumen completo con URLs y comandos debug
+
+### 🎯 Qué testea automáticamente:
+1. 🩺 **Health Check** → `/health`
+2. 📚 **API Docs** → `/docs` 
+3. 🏠 **Home** → `/`
+4. 💰 **Cotización normal** → `/cotizar`
+5. 🏦 **Cotización bancaria** → `/cotizar` (cliente_es_banco: true)
+
+### 📊 Ejemplo de output:
 ```bash
-./test_deployment.sh
+🚀 TESTING ORBIX AI DEPLOYMENT
+================================
+🌐 Testing server: 46.62.144.123
+
+🩺 Test 1: Health Check (/health)
+✅ /health responde correctamente
+   Response: {"status":"healthy","service":"Orbix AI"}
+
+🎉 ¡TODOS LOS TESTS PASARON!
+✅ Orbix AI está desplegado y funcionando correctamente en Hetzner
 ```
 
-Este script probará todos los endpoints automáticamente.
+## 🚀 DEPLOYMENT AUTOMÁTICO CONFIGURADO
+
+**El workflow ahora incluye:**
+- ✅ Build y deploy automático
+- ✅ Testing completo post-deployment  
+- ✅ Diagnósticos automáticos si algo falla
+- ✅ URLs listas para usar al finalizar
 
 ## 📝 Próximos pasos recomendados
 
