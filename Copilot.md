@@ -91,6 +91,27 @@ Para que el despliegue funcione, configura estos secrets en GitHub:
 1. **`HETZNER_IP`** - IP del servidor Hetzner
 2. **`HETZNER_SSH_KEY`** - Clave SSH privada para conexión
 
+## 🔑 Secrets de GitHub configurados
+
+✅ **SECRETS CONFIGURADOS:**
+
+1. **`HETZNER_IP`** → `46.62.144.123`
+2. **`HETZNER_SSH_KEY`** → `hUxnpXXEWHknCFa9L4tp`
+
+### 📋 Para configurar manualmente:
+1. Ve a: https://github.com/yovoyTecSRL/orbix/settings/secrets/actions
+2. Añade los secrets listados arriba
+3. ¡Push a main activará el deployment automáticamente!
+
+## 🌐 URLs del servicio desplegado
+
+Una vez configurados los secrets y hecho el deploy:
+
+- **🏠 Home:** http://46.62.144.123/
+- **🩺 Health:** http://46.62.144.123/health  
+- **📚 Docs:** http://46.62.144.123/docs
+- **💰 API:** http://46.62.144.123/cotizar
+
 ## 🚀 Flujo de despliegue
 
 1. **Push a main** → Trigger automático
@@ -111,6 +132,15 @@ curl http://localhost/
 curl http://localhost/health
 curl -X POST http://localhost/cotizar -H "Content-Type: application/json" -d '{"tipo_solucion":"API","horas_estimadas":100,"cliente_es_banco":false}'
 ```
+
+## 🧪 Testing automático
+
+Ejecuta después del deploy:
+```bash
+./test_deployment.sh
+```
+
+Este script probará todos los endpoints automáticamente.
 
 ## 📝 Próximos pasos recomendados
 
