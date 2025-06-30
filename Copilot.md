@@ -207,4 +207,72 @@ curl -X POST http://localhost/cotizar -H "Content-Type: application/json" -d '{"
 **¡El flujo está 100% funcional y listo para el primer despliegue!** 🎉
 
 ---
+
+## 🏢 ODOO INSTALADO PARA BABEL
+
+✅ **ODOO CONFIGURADO COMPLETAMENTE:**
+- **Docker Compose Full:** `docker-compose-full.yml`
+- **Módulo personalizado:** `orbix_payment_validation`
+- **Script de inicio:** `./start_orbix_odoo.sh`
+- **Documentación completa:** `README_Odoo_Babel.md`
+
+### 🎯 Arquitectura final:
+```
+🌐 HETZNER (46.62.144.123)
+├── 🚀 Orbix AI Principal (puerto 80)
+└── 📊 Producción completa
+
+💻 CODESPACES (localhost)
+├── 🚀 Orbix AI Desarrollo (puerto 80)
+├── 🏢 Odoo Testing Babel (puerto 8069)
+└── 🗃️ PostgreSQL (puerto 5432)
+```
+
+### 🧪 Para testing de Babel:
+
+#### 🏁 Inicio rápido:
+```bash
+./start_orbix_odoo.sh
+```
+
+#### 🌐 URLs disponibles:
+- **Orbix AI:** http://localhost/
+- **Odoo:** http://localhost:8069 
+- **Credenciales:** admin / orbix_admin_2025
+
+#### 💳 Testing de tarjetas:
+1. Ve a Odoo → Accounting → Orbix Payment Validation
+2. Crea registros de tarjetas de prueba
+3. Ejecuta validaciones automáticas
+4. Revisa resultados (aprobada/rechazada)
+
+#### ✅ Tarjetas válidas para testing:
+- **Visa:** 4532015112830366
+- **MasterCard:** 5555555555554444
+- **Amex:** 378282246310005
+- **Discover:** 6011111111111117
+
+### 🔧 Comandos útiles:
+```bash
+# Ver logs de Odoo
+docker-compose -f docker-compose-full.yml logs -f odoo
+
+# Reiniciar solo Odoo
+docker-compose -f docker-compose-full.yml restart odoo
+
+# Detener todo
+docker-compose -f docker-compose-full.yml down
+```
+
+## ✅ RESUMEN COMPLETO DEL SISTEMA
+
+🟢 **PLATAFORMA 100% FUNCIONAL:**
+- ✅ **Hetzner:** Orbix AI principal desplegado
+- ✅ **Codespaces:** Desarrollo + Odoo para Babel
+- ✅ **CI/CD:** GitHub Actions automatizado
+- ✅ **Testing:** Scripts automatizados
+- ✅ **Validaciones:** Módulo Odoo personalizado
+- ✅ **Documentación:** Completa y actualizada
+
+---
 *Documentación generada por GitHub Copilot el 30 de junio de 2025*
