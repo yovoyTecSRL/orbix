@@ -1,9 +1,17 @@
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.9
-
-COPY . /app
-COPY ./orbix_config.json /app/orbix_config.json
+FROM python:3.11-slim
 
 WORKDIR /app
-RUN pip install fastapi pydantic
 
-EXPOSE 80
+# Copiar requirements y instalar dependencias
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copiar archivos de la aplicación
+COPY . .
+COPY ./orbix_config.json /app/orbix_config.json
+
+# Exponer puerto
+EXPOSE 8000
+
+# Comando para ejecutar la aplicación
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
