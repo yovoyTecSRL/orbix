@@ -2,25 +2,35 @@
 
 ## 📍 SERVIDORES ACTIVOS
 
-### 💻 CODESPACES (Desarrollo)
-**URL:** https://super-duper-space-xylophone-4jgg45xrwxx9c7qpp-80.app.github.dev/
-**Puerto:** 80 (mapeado a 8000 interno)
-**Estado:** ✅ ACTIVO
+### 💻 CODESPACES (Desarrollo) ✅ FUNCIONANDO
+**URL Local:** http://localhost/
+**URL Pública:** https://super-duper-space-xylophone-4jgg45xrwxx9c7qpp-80.app.github.dev/
+**Puerto:** 80 → 8000 (FastAPI interno)
+**Estado:** ✅ ACTIVO Y FUNCIONANDO
 **Uso:** Desarrollo y testing
 
-### 🌐 HETZNER (Producción)  
+### 🌐 HETZNER (Producción) 🔄 DESPLEGANDO  
 **IP:** 46.62.144.123
 **Dominio:** sistemasorbix.com
-**Puerto:** 80
-**Estado:** 🔄 DESPLEGANDO
+**Puerto:** 80 (HTTP) / 443 (HTTPS cuando configure SSL)
+**Estado:** 🔄 GITHUB ACTIONS EJECUTÁNDOSE
 **Uso:** Producción
 
-## 🏢 ODOO (Solo Codespaces)
+## 🏢 ODOO (Solo Codespaces) ⚠️ REINICIANDO
 **URL:** https://super-duper-space-xylophone-4jgg45xrwxx9c7qpp-8069.app.github.dev/
-**Puerto:** 8069
+**Puerto:** 8069 (Odoo estándar)
 **Usuario:** admin
 **Contraseña:** orbix_admin_2025
+**Estado:** 🔄 Configuración en proceso
 **Uso:** Testing validaciones Babel
+
+## 🗃️ POSTGRESQL (Solo Codespaces) ✅ FUNCIONANDO
+**Host:** localhost
+**Puerto:** 5432 (PostgreSQL estándar)
+**Base de datos:** odoo
+**Usuario:** odoo
+**Contraseña:** odoo_password_2025
+**Estado:** ✅ ACTIVO
 
 ## 🔧 Configuración DNS requerida
 
