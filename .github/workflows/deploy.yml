@@ -80,9 +80,16 @@ jobs:
           docker-compose ps
           docker-compose logs --tail=20
           
-          # Test de conectividad
-          echo "🔍 Testing connectivity..."
-          curl -f http://localhost/ || echo "⚠️ Warning: Service might still be starting..."
+          # Ejecutar script de testing completo
+          if [ -f test_deployment.sh ]; then
+            echo "🧪 Running comprehensive deployment tests..."
+            chmod +x test_deployment.sh
+            HETZNER_IP=${{ secrets.HETZNER_IP }} ./test_deployment.sh
+          else
+            # Test básico si no existe el script
+            echo "🔍 Basic connectivity test..."
+            curl -f http://localhost/ || echo "⚠️ Warning: Service might still be starting..."
+          fi
           
           echo "🎉 Deployment completed successfully!"
           
