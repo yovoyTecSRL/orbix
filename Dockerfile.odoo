@@ -1,0 +1,14 @@
+FROM odoo:16.0
+
+USER root
+
+# Instalar dependencias adicionales para el addon
+RUN pip3 install luhn
+
+# Crear directorios necesarios
+RUN mkdir -p /var/log/odoo && chown odoo:odoo /var/log/odoo
+
+# Configurar timezone
+RUN ln -sf /usr/share/zoneinfo/America/Bogota /etc/localtime
+
+USER odoo

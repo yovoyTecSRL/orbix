@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista de lista para validaciones de pago -->
+    <record id="view_payment_validation_tree" model="ir.ui.view">
+        <field name="name">orbix.payment.validation.tree</field>
+        <field name="model">orbix.payment.validation</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="card_number_masked"/>
+                <field name="card_type"/>
+                <field name="is_valid_luhn"/>
+                <field name="is_valid_format"/>
+                <field name="is_expired"/>
+                <field name="test_result"/>
+                <field name="babel_tester"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista de formulario para validaciones de pago -->
+    <record id="view_payment_validation_form" model="ir.ui.view">
+        <field name="name">orbix.payment.validation.form</field>
+        <field name="model">orbix.payment.validation</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_test_payment" string="Ejecutar Test de Validación" 
+                            type="object" class="btn-primary"/>
+                    <field name="test_result" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group name="card_info" string="Información de Tarjeta">
+                            <field name="card_number" password="True"/>
+                            <field name="card_number_masked" readonly="1"/>
+                            <field name="card_type" readonly="1"/>
+                            <field name="expiry_month"/>
+                            <field name="expiry_year"/>
+                            <field name="cvv" password="True"/>
+                        </group>
+                        <group name="validation_info" string="Resultados de Validación">
+                            <field name="is_valid_luhn" readonly="1"/>
+                            <field name="is_valid_format" readonly="1"/>
+                            <field name="is_expired" readonly="1"/>
+                            <field name="babel_tester"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Notas del Test">
+                            <field name="test_notes" widget="html"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista de búsqueda -->
+    <record id="view_payment_validation_search" model="ir.ui.view">
+        <field name="name">orbix.payment.validation.search</field>
+        <field name="model">orbix.payment.validation</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="card_number_masked"/>
+                <field name="card_type"/>
+                <field name="babel_tester"/>
+                <filter string="Válidas" name="valid_cards" 
+                        domain="[('is_valid_luhn', '=', True), ('is_valid_format', '=', True), ('is_expired', '=', False)]"/>
+                <filter string="Inválidas" name="invalid_cards" 
+                        domain="['|', '|', ('is_valid_luhn', '=', False), ('is_valid_format', '=', False), ('is_expired', '=', True)]"/>
+                <filter string="Aprobadas" name="approved" domain="[('test_result', '=', 'approved')]"/>
+                <filter string="Rechazadas" name="declined" domain="[('test_result', '=', 'declined')]"/>
+                <group expand="0" string="Agrupar por">
+                    <filter string="Tipo de Tarjeta" name="group_card_type" context="{'group_by': 'card_type'}"/>
+                    <filter string="Resultado del Test" name="group_test_result" context="{'group_by': 'test_result'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Acción de ventana -->
+    <record id="action_payment_validation" model="ir.actions.act_window">
+        <field name="name">Validación de Tarjetas - Babel Testing</field>
+        <field name="res_model">orbix.payment.validation</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_valid_cards': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crear nueva validación de tarjeta para testing
+            </p>
+            <p>
+                Este módulo permite a Babel hacer testing de validaciones de tarjetas de crédito.
+                Puede crear registros de prueba y ejecutar validaciones completas.
+            </p>
+        </field>
+    </record>
+
+    <!-- Elemento de menú -->
+    <menuitem id="menu_orbix_payment_root" name="Orbix Payment Testing" sequence="10"/>
+    <menuitem id="menu_payment_validation" name="Validación de Tarjetas" 
+              parent="menu_orbix_payment_root" action="action_payment_validation" sequence="10"/>
+</odoo>

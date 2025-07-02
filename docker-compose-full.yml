@@ -35,28 +35,34 @@ services:
 
   # Odoo para testing de validaciones de tarjetas (Babel)
   odoo:
-    image: odoo:16.0
+    build:
+      context: .
+      dockerfile: Dockerfile.odoo
     container_name: orbix-odoo
     depends_on:
       - postgres
     ports:
       - "8070:8069"
+      - "8072:8072"  # Puerto para longpolling
     environment:
       - HOST=postgres
       - USER=odoo
       - PASSWORD=odoo_password_2025
+      - DATABASE=odoo
     volumes:
       - odoo_web_data:/var/lib/odoo
       - ./odoo_config:/etc/odoo
       - ./odoo_addons:/mnt/extra-addons
+      - odoo_logs:/var/log/odoo
     restart: always
     networks:
       - orbix-network
-    command: -- --database=odoo --db_host=postgres --db_port=5432 --db_user=odoo --db_password=odoo_password_2025
+    command: -- --config=/etc/odoo/odoo.conf --database=odoo --init=base --without-demo=all
 
 volumes:
   postgres_data:
   odoo_web_data:
+  odoo_logs:
 
 networks:
   orbix-network:
