@@ -1,14 +1,14 @@
-FROM odoo:16.0
+FROM odoo:16.0-slim
 
 USER root
 
+# Actualizar paquetes del sistema para reducir vulnerabilidades
+RUN apt-get update && apt-get upgrade -y && apt-get clean
+
 # Instalar dependencias adicionales para el addon
-RUN pip3 install luhn
+RUN pip3 install --upgrade pip && pip3 install --upgrade luhn
 
 # Crear directorios necesarios
 RUN mkdir -p /var/log/odoo && chown odoo:odoo /var/log/odoo
-
-# Configurar timezone
-RUN ln -sf /usr/share/zoneinfo/America/Bogota /etc/localtime
 
 USER odoo

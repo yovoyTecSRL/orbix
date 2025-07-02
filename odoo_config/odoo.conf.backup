@@ -47,5 +47,13 @@ language = es_ES
 ; Server-wide modules
 server_wide_modules = base,web
 
+; Email configuration (opcional)
+; email_from = noreply@orbix.com
+; smtp_server = localhost
+; smtp_port = 25
+; smtp_ssl = False
+; smtp_user = False
+; smtp_password = False
+
 ; CSV import/export
 csv_internal_sep = ,

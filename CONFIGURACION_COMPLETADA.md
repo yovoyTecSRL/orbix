@@ -12,7 +12,8 @@
 
 ### 2. 🏢 Odoo ERP Personalizado
 - **URL**: http://localhost:8070 (puerto 8070)
-- **Credenciales**: admin / orbix_admin_2025
+- **Master Password**: orbix_master_2025
+- **Credenciales DB**: odoo / odoo_password_2025
 - **Features**:
   - ✅ Configuración completa en español
   - ✅ Addon personalizado: `orbix_payment_validation`
@@ -54,7 +55,12 @@
 
 ## 🚀 Cómo iniciar los servicios:
 
-### Opción 1: Script automatizado
+### Opción 1: Script de corrección (RECOMENDADO)
+```bash
+./fix_odoo_postgres.sh
+```
+
+### Opción 2: Script automatizado original
 ```bash
 ./setup_odoo_orbix.sh
 ```
@@ -86,13 +92,14 @@ python3 main.py
 
 ## 📋 Pasos para Testing con Babel:
 
-1. **Iniciar servicios**: `docker-compose -f docker-compose-full.yml up -d`
+1. **Iniciar servicios**: `./fix_odoo_postgres.sh`
 2. **Acceder a Odoo**: http://localhost:8070
-3. **Login**: admin / orbix_admin_2025
-4. **Instalar addon**: Apps → Buscar "Orbix Payment" → Instalar
-5. **Testing**: Orbix Payment Testing → Validación de Tarjetas
-6. **Usar datos de prueba** o crear nuevos registros
-7. **Ejecutar validaciones** con el botón "Ejecutar Test de Validación"
+3. **Crear DB**: Master Password: orbix_master_2025
+4. **Login con**: admin@orbix.com / admin123
+5. **Instalar addon**: Apps → Buscar "Orbix Payment" → Instalar
+6. **Testing**: Orbix Payment Testing → Validación de Tarjetas
+7. **Usar datos de prueba** o crear nuevos registros
+8. **Ejecutar validaciones** con el botón "Ejecutar Test de Validación"
 
 ## 🔧 Repositorio Actualizado:
 

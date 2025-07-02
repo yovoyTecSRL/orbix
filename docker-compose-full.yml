@@ -25,39 +25,45 @@ services:
       POSTGRES_DB: odoo
       POSTGRES_USER: odoo
       POSTGRES_PASSWORD: odoo_password_2025
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./init-postgres.sql:/docker-entrypoint-initdb.d/init-postgres.sql:ro
     ports:
       - "5432:5432"
     restart: always
     networks:
       - orbix-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo -d odoo"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   # Odoo para testing de validaciones de tarjetas (Babel)
   odoo:
-    build:
-      context: .
-      dockerfile: Dockerfile.odoo
+    image: odoo:16.0
     container_name: orbix-odoo
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     ports:
       - "8070:8069"
-      - "8072:8072"  # Puerto para longpolling
     environment:
       - HOST=postgres
       - USER=odoo
       - PASSWORD=odoo_password_2025
-      - DATABASE=odoo
+      - POSTGRES_DB=odoo
+      - POSTGRES_USER=odoo
+      - POSTGRES_PASSWORD=odoo_password_2025
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
     volumes:
       - odoo_web_data:/var/lib/odoo
-      - ./odoo_config:/etc/odoo
-      - ./odoo_addons:/mnt/extra-addons
       - odoo_logs:/var/log/odoo
     restart: always
     networks:
       - orbix-network
-    command: -- --config=/etc/odoo/odoo.conf --database=odoo --init=base --without-demo=all
 
 volumes:
   postgres_data:
