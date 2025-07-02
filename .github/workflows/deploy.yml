@@ -1,30 +1,30 @@
+
 name: 🚀 Deploy Orbix AI to Hetzner
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
 
 jobs:
   deploy:
-    name: 📦 Build and Deploy
+    name: 📦 Build and Deploy Orbix AI
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: 📥 Checkout repository
+    - name: 📥 Checkout Repository
       uses: actions/checkout@v4
-      
+
     - name: 🔧 Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
-      
-    - name: 🏗️ Build Docker image
+
+    - name: 🛠️ Build Docker Image
       run: |
         echo "🔨 Building Orbix AI Docker image..."
-        docker build -t orbix-ai:latest .
+        docker build --pull --no-cache -t orbix-ai:latest .
         docker save orbix-ai:latest | gzip > orbix-ai.tar.gz
-        
-    - name: 📤 Deploy to Hetzner Server
+
+    - name: 📤 Deploy to Hetzner
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.HETZNER_IP }}
@@ -33,71 +33,64 @@ jobs:
         port: 22
         timeout: 300s
         script: |
-          echo "🚀 Starting deployment process..."
-          
-          # Crear directorio si no existe
-          mkdir -p /opt/orbix
-          cd /opt/orbix
-          
-          # Backup de la versión anterior
+          set -e
+          echo "🚀 Connecting to Hetzner..."
+
+          # Preparar entorno
+          mkdir -p /opt/orbix && cd /opt/orbix
+
+          # Backup
           if [ -f docker-compose.yml ]; then
-            echo "💾 Creating backup..."
+            echo "💾 Backing up docker-compose.yml..."
             docker-compose down || true
-            cp docker-compose.yml docker-compose.yml.backup.$(date +%Y%m%d_%H%M%S) || true
+            cp docker-compose.yml docker-compose.backup.$(date +%Y%m%d_%H%M%S).yml || true
           fi
-          
-          # Actualizar código desde GitHub
-          if [ -d .git ]; then
-            echo "🔄 Updating from GitHub..."
+
+          # Git sync
+          if [ ! -d .git ]; then
+            git clone https://github.com/yovoyTecSRL/orbix.git .
+          else
             git fetch origin
             git reset --hard origin/main
-          else
-            echo "📥 Cloning repository..."
-            git clone https://github.com/yovoyTecSRL/orbix.git .
           fi
-          
-          # Asegurar permisos
+
+          # Dar permisos
           chmod +x *.sh || true
-          
-          # Detener contenedores anteriores
-          echo "🛑 Stopping previous containers..."
+
+          # Detener y limpiar
           docker-compose down || true
-          docker stop orbix-ai || true
-          docker rm orbix-ai || true
-          
-          # Limpiar imágenes antiguas
-          echo "🧹 Cleaning old images..."
-          docker image prune -f || true
-          
-          # Construir y ejecutar
-          echo "🏗️ Building and starting new containers..."
+          docker rm -f orbix-ai || true
+          docker image prune -af || true
+
+          # Build & deploy
+          echo "🚀 Rebuilding containers..."
           docker-compose build --no-cache
           docker-compose up -d
-          
-          # Verificar estado
-          echo "✅ Checking deployment status..."
-          sleep 10
-          docker-compose ps
-          docker-compose logs --tail=20
-          
-          # Ejecutar script de testing completo
+
+          # Verificación
+          echo "✅ Containers running:"
+          docker ps
+          echo "📄 Últimos logs:"
+          docker-compose logs --tail=30 || true
+
+          # Test automático
           if [ -f test_deployment.sh ]; then
-            echo "🧪 Running comprehensive deployment tests..."
+            echo "🧪 Running deployment tests..."
             chmod +x test_deployment.sh
-            HETZNER_IP=${{ secrets.HETZNER_IP }} ./test_deployment.sh
+            ./test_deployment.sh
           else
-            # Test básico si no existe el script
-            echo "🔍 Basic connectivity test..."
-            curl -f http://localhost/ || echo "⚠️ Warning: Service might still be starting..."
+            echo "🔍 Quick test: curl localhost"
+            curl -f http://localhost/ || echo "⚠️ Could not connect yet."
           fi
-          
-          echo "🎉 Deployment completed successfully!"
-          
-    - name: 🔔 Deployment Status
+
+          echo "✅ Deployment completed!"
+
+    - name: 🔔 Notify Deployment Status
       if: always()
       run: |
-        if [ ${{ job.status }} == 'success' ]; then
-          echo "✅ Deployment successful! 🎉"
+        echo "📡 Deployment status: ${{ job.status }}"
+        if [ "${{ job.status }}" == "success" ]; then
+          echo "✅ Orbix AI deployed successfully to Hetzner!"
         else
-          echo "❌ Deployment failed! 😞"
+          echo "❌ Deployment failed. Please check the logs."
         fi
