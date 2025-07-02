@@ -1,96 +1,61 @@
+#!/bin/bash
 
-name: 🚀 Deploy Orbix AI to Hetzner
+### 🧹 Script de Limpieza y Resolución de Conflictos para ORBIX ###
+### Autor: Orbix AI – 2025 ###
 
-on:
-  push:
-    branches: [main]
-  workflow_dispatch:
+set -e
 
-jobs:
-  deploy:
-    name: 📦 Build and Deploy Orbix AI
-    runs-on: ubuntu-latest
+BRANCH_MAIN="main"
+BRANCH_BACKUP="proceso-creacion-orbix"
 
-    steps:
-    - name: 📥 Checkout Repository
-      uses: actions/checkout@v4
+# Paso 1: Confirmar rama actual y guardar cambios
+current_branch=$(git rev-parse --abbrev-ref HEAD)
+echo "🌿 Rama actual: $current_branch"
 
-    - name: 🔧 Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+echo "💾 Guardando cambios temporales si existen..."
+git stash save "🔧 Backup automático antes de limpiar" || true
 
-    - name: 🛠️ Build Docker Image
-      run: |
-        echo "🔨 Building Orbix AI Docker image..."
-        docker build --pull --no-cache -t orbix-ai:latest .
-        docker save orbix-ai:latest | gzip > orbix-ai.tar.gz
+# Paso 2: Cambiar a rama principal y actualizar
+echo "🔁 Cambiando a rama $BRANCH_MAIN"
+git checkout $BRANCH_MAIN
 
-    - name: 📤 Deploy to Hetzner
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.HETZNER_IP }}
-        username: root
-        key: ${{ secrets.HETZNER_SSH_KEY }}
-        port: 22
-        timeout: 300s
-        script: |
-          set -e
-          echo "🚀 Connecting to Hetzner..."
+echo "📥 Pull de cambios remotos"
+git pull origin $BRANCH_MAIN
 
-          # Preparar entorno
-          mkdir -p /opt/orbix && cd /opt/orbix
+# Paso 3: Borrar archivos duplicados, backups y temporales
+echo "🧽 Eliminando archivos innecesarios..."
+rm -f ssh_setup_github_hetzner\ \(1\).sh orbix-sentinel.txt
+rm -f *.tar.gz *.zip *.bak || true
+rm -rf __pycache__
 
-          # Backup
-          if [ -f docker-compose.yml ]; then
-            echo "💾 Backing up docker-compose.yml..."
-            docker-compose down || true
-            cp docker-compose.yml docker-compose.backup.$(date +%Y%m%d_%H%M%S).yml || true
-          fi
+# Paso 4: Limpiar archivos no registrados por Git
+echo "🧹 git clean"
+git clean -f -d
 
-          # Git sync
-          if [ ! -d .git ]; then
-            git clone https://github.com/yovoyTecSRL/orbix.git .
-          else
-            git fetch origin
-            git reset --hard origin/main
-          fi
+# Paso 5: Resolver conflictos si quedaron marcados
+if grep -q '<<<<<<<' main.py 2>/dev/null || grep -q '<<<<<<<' requirements.txt 2>/dev/null; then
+  echo "⚠️ Aún hay conflictos en main.py o requirements.txt. Por favor edítalos manualmente."
+  exit 1
+fi
 
-          # Dar permisos
-          chmod +x *.sh || true
+# Paso 6: Commit de limpieza y push a main
+git add .
+git commit -m "🧹 Limpieza automática de archivos y resolución preliminar"
+git push origin $BRANCH_MAIN
 
-          # Detener y limpiar
-          docker-compose down || true
-          docker rm -f orbix-ai || true
-          docker image prune -af || true
+# Paso 7: Actualizar rama de respaldo
+echo "📦 Fusionando en rama de respaldo $BRANCH_BACKUP"
+git checkout $BRANCH_BACKUP
+git pull origin $BRANCH_BACKUP
+git merge $BRANCH_MAIN || true
 
-          # Build & deploy
-          echo "🚀 Rebuilding containers..."
-          docker-compose build --no-cache
-          docker-compose up -d
+echo "📤 Enviando respaldo actualizado..."
+git push origin $BRANCH_BACKUP
 
-          # Verificación
-          echo "✅ Containers running:"
-          docker ps
-          echo "📄 Últimos logs:"
-          docker-compose logs --tail=30 || true
+# Paso 8: Restaurar stash si había
+if git stash list | grep -q "Backup automático"; then
+  echo "♻️ Restaurando cambios stashed..."
+  git stash pop || true
+fi
 
-          # Test automático
-          if [ -f test_deployment.sh ]; then
-            echo "🧪 Running deployment tests..."
-            chmod +x test_deployment.sh
-            ./test_deployment.sh
-          else
-            echo "🔍 Quick test: curl localhost"
-            curl -f http://localhost/ || echo "⚠️ Could not connect yet."
-          fi
-
-          echo "✅ Deployment completed!"
-
-    - name: 🔔 Notify Deployment Status
-      if: always()
-      run: |
-        echo "📡 Deployment status: ${{ job.status }}"
-        if [ "${{ job.status }}" == "success" ]; then
-          echo "✅ Orbix AI deployed successfully to Hetzner!"
-        else
-          echo "❌ Deployment failed. Please check the logs."
-        fi
+echo "✅ Limpieza y sincronización completa."
