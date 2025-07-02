@@ -1,0 +1,85 @@
+
+# 🧠 PROMPT MAESTRO FINAL — ORBIX AI con integración total
+
+# 🎯 OBJETIVO:
+# Crear la plataforma empresarial ORBIX AI con:
+# - Validaciones con GPT
+# - CRM Odoo
+# - Control de tarjetas
+# - Entregas vía mimoto.express
+# - Seguimiento automatizado y reparación de errores
+# - Despliegue en GitHub + Docker + Hetzner
+# - Modular y vendible como microservicio
+
+──────────────────────────────────────────────
+🔹 INTEGRACIÓN mimoto.express (api.mimoto.express)
+──────────────────────────────────────────────
+- Al completar una validación de cliente aprobada:
+  1. Crear orden POST a api.mimoto.express con los datos del cliente.
+  2. Recibir número de tracking (o ID de orden).
+  3. Mostrar al cliente estado del envío (por API):
+     - Creación de tarjeta
+     - Orden generada
+     - En camino
+     - Entregada (requiere cédula)
+  4. Opción para consultar estado con `/tracking?id=`
+
+- Agregar endpoint:
+  `/enviar_mimoto`
+  {
+    "cedula": "...",
+    "direccion": "...",
+    "nombre": "...",
+    "telefono": "..."
+  }
+
+- Guardar resultado en Odoo como lead + estado de tarjeta.
+
+──────────────────────────────────────────────
+🔹 FLAGS Y AUTORREPARACIÓN DE ERRORES
+──────────────────────────────────────────────
+- Cada vez que una validación o envío falla:
+  - Mostrar mensaje popup al usuario
+  - Registrar `flag` en consola
+  - Crear log JSON local o en base de datos
+  - Si hay permisos, autorreparar en segundo plano
+
+- GitHub Copilot tiene permiso de ejecutar tareas en segundo plano con mis accesos.
+  - Si necesita credenciales (Odoo, mimoto, etc), puede solicitarlas por audio si detecta un parlante activo.
+
+──────────────────────────────────────────────
+🔹 API REST EN ODOO + MÓDULO DE TARJETAS
+──────────────────────────────────────────────
+- Instalar y configurar API REST en Odoo
+- Crear módulo `orbix_tarjetas`:
+  - Modelo: tarjetas.credito
+    - nombre_cliente
+    - cedula
+    - estado_validacion
+    - tracking_mimoto
+    - estado_entrega
+
+- Mostrar listado de tarjetas aprobadas y en curso en dashboard interno de Odoo.
+
+──────────────────────────────────────────────
+🔹 TODO EL SISTEMA FUNCIONARÁ EN:
+──────────────────────────────────────────────
+- Servidor Hetzner Ubuntu 24.04
+- Docker + Docker Compose
+- NGINX + SSL (Let’s Encrypt)
+- GitHub como repositorio central
+- GitHub Actions (opcional)
+
+──────────────────────────────────────────────
+🔹 REQUISITOS COPILOT:
+──────────────────────────────────────────────
+- Generar todos los endpoints (FastAPI)
+- Crear Dockerfile, docker-compose.yml
+- Incluir setup_orbix.sh y .env
+- Documentar cada endpoint con docstrings
+- Comentar clases y funciones
+- Crear carpetas `/backend`, `/odoo_module`, `/frontend`
+- Incluir prueba automática post-deploy (curl healthcheck)
+- Crear README explicativo y demo en línea
+
+🎁 Copilot: comenzá generando estructura y base de código. Luego despliega a Hetzner.

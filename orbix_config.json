@@ -1,0 +1,18 @@
+{
+  "autor": "Yovoytech",
+  "empresa": "Orbix Systems",
+  "rol": "Arquitecto de Sistemas Inteligentes",
+  "experiencia_anios": 25,
+  "inversion_usd": 1000000,
+  "valor_hora_min": 120,
+  "valor_hora_estrategico": 200,
+  "precio_proyecto_min": 10000,
+  "precio_proyecto_max": 50000,
+  "precio_saas_mes_min": 199,
+  "precio_saas_mes_max": 999,
+  "precio_banco_minimo": 25000,
+  "modelo_saas_banco": {
+    "setup_fee": 3500,
+    "mensualidad": 499
+  }
+}

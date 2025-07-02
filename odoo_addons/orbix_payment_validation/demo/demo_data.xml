@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Datos de demostración adicionales -->
+        <record id="demo_visa_1" model="orbix.payment.validation">
+            <field name="card_number">4111111111111111</field>
+            <field name="expiry_month">09</field>
+            <field name="expiry_year">2028</field>
+            <field name="cvv">321</field>
+            <field name="babel_tester">Demo Babel</field>
+            <field name="test_result">approved</field>
+            <field name="test_notes">Demo: Tarjeta Visa estándar para demostración</field>
+        </record>
+
+        <record id="demo_mastercard_1" model="orbix.payment.validation">
+            <field name="card_number">5105105105105100</field>
+            <field name="expiry_month">11</field>
+            <field name="expiry_year">2025</field>
+            <field name="cvv">654</field>
+            <field name="babel_tester">Demo Babel</field>
+            <field name="test_result">approved</field>
+            <field name="test_notes">Demo: Tarjeta MasterCard para demostración</field>
+        </record>
+    </data>
+</odoo>
