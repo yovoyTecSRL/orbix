@@ -1,103 +1,61 @@
-name: 🚀 Deploy Orbix AI to Hetzner
+#!/bin/bash
 
-on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
+### 🧹 Script de Limpieza y Resolución de Conflictos para ORBIX ###
+### Autor: Orbix AI – 2025 ###
 
-jobs:
-  deploy:
-    name: 📦 Build and Deploy
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: 📥 Checkout repository
-      uses: actions/checkout@v4
-      
-    - name: 🔧 Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-      
-    - name: 🏗️ Build Docker image
-      run: |
-        echo "🔨 Building Orbix AI Docker image..."
-        docker build -t orbix-ai:latest .
-        docker save orbix-ai:latest | gzip > orbix-ai.tar.gz
-        
-    - name: 📤 Deploy to Hetzner Server
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.HETZNER_IP }}
-        username: root
-        key: ${{ secrets.HETZNER_SSH_KEY }}
-        port: 22
-        timeout: 300s
-        script: |
-          echo "🚀 Starting deployment process..."
-          
-          # Crear directorio si no existe
-          mkdir -p /opt/orbix
-          cd /opt/orbix
-          
-          # Backup de la versión anterior
-          if [ -f docker-compose.yml ]; then
-            echo "💾 Creating backup..."
-            docker-compose down || true
-            cp docker-compose.yml docker-compose.yml.backup.$(date +%Y%m%d_%H%M%S) || true
-          fi
-          
-          # Actualizar código desde GitHub
-          if [ -d .git ]; then
-            echo "🔄 Updating from GitHub..."
-            git fetch origin
-            git reset --hard origin/main
-          else
-            echo "📥 Cloning repository..."
-            git clone https://github.com/yovoyTecSRL/orbix.git .
-          fi
-          
-          # Asegurar permisos
-          chmod +x *.sh || true
-          
-          # Detener contenedores anteriores
-          echo "🛑 Stopping previous containers..."
-          docker-compose down || true
-          docker stop orbix-ai || true
-          docker rm orbix-ai || true
-          
-          # Limpiar imágenes antiguas
-          echo "🧹 Cleaning old images..."
-          docker image prune -f || true
-          
-          # Construir y ejecutar
-          echo "🏗️ Building and starting new containers..."
-          docker-compose build --no-cache
-          docker-compose up -d
-          
-          # Verificar estado
-          echo "✅ Checking deployment status..."
-          sleep 10
-          docker-compose ps
-          docker-compose logs --tail=20
-          
-          # Ejecutar script de testing completo
-          if [ -f test_deployment.sh ]; then
-            echo "🧪 Running comprehensive deployment tests..."
-            chmod +x test_deployment.sh
-            HETZNER_IP=${{ secrets.HETZNER_IP }} ./test_deployment.sh
-          else
-            # Test básico si no existe el script
-            echo "🔍 Basic connectivity test..."
-            curl -f http://localhost/ || echo "⚠️ Warning: Service might still be starting..."
-          fi
-          
-          echo "🎉 Deployment completed successfully!"
-          
-    - name: 🔔 Deployment Status
-      if: always()
-      run: |
-        if [ ${{ job.status }} == 'success' ]; then
-          echo "✅ Deployment successful! 🎉"
-        else
-          echo "❌ Deployment failed! 😞"
-        fi
+set -e
+
+BRANCH_MAIN="main"
+BRANCH_BACKUP="proceso-creacion-orbix"
+
+# Paso 1: Confirmar rama actual y guardar cambios
+current_branch=$(git rev-parse --abbrev-ref HEAD)
+echo "🌿 Rama actual: $current_branch"
+
+echo "💾 Guardando cambios temporales si existen..."
+git stash save "🔧 Backup automático antes de limpiar" || true
+
+# Paso 2: Cambiar a rama principal y actualizar
+echo "🔁 Cambiando a rama $BRANCH_MAIN"
+git checkout $BRANCH_MAIN
+
+echo "📥 Pull de cambios remotos"
+git pull origin $BRANCH_MAIN
+
+# Paso 3: Borrar archivos duplicados, backups y temporales
+echo "🧽 Eliminando archivos innecesarios..."
+rm -f ssh_setup_github_hetzner\ \(1\).sh orbix-sentinel.txt
+rm -f *.tar.gz *.zip *.bak || true
+rm -rf __pycache__
+
+# Paso 4: Limpiar archivos no registrados por Git
+echo "🧹 git clean"
+git clean -f -d
+
+# Paso 5: Resolver conflictos si quedaron marcados
+if grep -q '<<<<<<<' main.py 2>/dev/null || grep -q '<<<<<<<' requirements.txt 2>/dev/null; then
+  echo "⚠️ Aún hay conflictos en main.py o requirements.txt. Por favor edítalos manualmente."
+  exit 1
+fi
+
+# Paso 6: Commit de limpieza y push a main
+git add .
+git commit -m "🧹 Limpieza automática de archivos y resolución preliminar"
+git push origin $BRANCH_MAIN
+
+# Paso 7: Actualizar rama de respaldo
+echo "📦 Fusionando en rama de respaldo $BRANCH_BACKUP"
+git checkout $BRANCH_BACKUP
+git pull origin $BRANCH_BACKUP
+git merge $BRANCH_MAIN || true
+
+echo "📤 Enviando respaldo actualizado..."
+git push origin $BRANCH_BACKUP
+
+# Paso 8: Restaurar stash si había
+if git stash list | grep -q "Backup automático"; then
+  echo "♻️ Restaurando cambios stashed..."
+  git stash pop || true
+fi
+
+echo "✅ Limpieza y sincronización completa."
