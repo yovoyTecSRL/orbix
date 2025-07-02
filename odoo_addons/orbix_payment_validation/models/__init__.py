@@ -1,11 +1,12 @@
-from odoo import models, fields, api
+from odoo import api, models
+import odoo.fields as fields
 from odoo.exceptions import ValidationError
 import re
 import luhn
-
 class PaymentValidation(models.Model):
     _name = 'orbix.payment.validation'
     _description = 'Validación de Tarjetas de Crédito - Babel Testing'
+    _rec_name = 'card_number_masked'
     _rec_name = 'card_number_masked'
 
     # Campos básicos
