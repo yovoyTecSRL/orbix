@@ -1,4 +1,6 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse, FileResponse
 from pydantic import BaseModel
 import json
 from pathlib import Path
@@ -6,9 +8,34 @@ import os
 
 app = FastAPI(title="Orbix AI API", version="1.0.0")
 
-@app.get("/")
+# Montar archivos estáticos
+app.mount("/static", StaticFiles(directory="."), name="static")
+
+@app.get("/", response_class=HTMLResponse)
 def read_root():
-    return {"message": "¡Orbix AI listo desde Hetzner con Copilot y FastAPI!"}
+    """Servir la página principal HTML"""
+    try:
+        with open("index.html", "r", encoding="utf-8") as f:
+            return HTMLResponse(content=f.read())
+    except FileNotFoundError:
+        return HTMLResponse(content="""
+        <html>
+            <head><title>Orbix AI</title></head>
+            <body>
+                <h1>¡Orbix AI listo desde servidor!</h1>
+                <p>API disponible en /docs</p>
+                <p>Odoo disponible en puerto 8070</p>
+            </body>
+        </html>
+        """)
+
+@app.get("/dashboard")
+def dashboard():
+    """Servir dashboard HTML"""
+    try:
+        return FileResponse("dashboard.html")
+    except:
+        return {"message": "Dashboard HTML no encontrado"}
 
 @app.get("/health")
 def health_check():
