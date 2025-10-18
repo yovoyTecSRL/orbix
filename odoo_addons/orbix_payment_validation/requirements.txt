@@ -1,0 +1,2 @@
+# Dependencias para el addon de Odoo - Orbix Payment Validation
+luhn==0.2.0

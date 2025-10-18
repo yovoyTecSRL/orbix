@@ -1,0 +1,59 @@
+[options]
+; This is the password that allows database operations:
+admin_passwd = orbix_master_2025
+db_host = postgres
+db_port = 5432
+db_user = odoo
+db_password = odoo_password_2025
+
+; Addons configuration
+addons_path = /mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons
+auto_reload = True
+default_productivity_apps = True
+
+; Server configuration
+http_interface = 0.0.0.0
+http_port = 8069
+longpolling_port = 8072
+
+; Database configuration
+db_maxconn = 64
+db_template = template0
+
+; Logging
+log_level = info
+log_handler = :INFO
+logfile = /var/log/odoo/odoo.log
+syslog = False
+
+; Security
+list_db = True
+proxy_mode = False
+
+; Performance
+workers = 0
+max_cron_threads = 1
+limit_memory_hard = 2684354560
+limit_memory_soft = 2147483648
+limit_request = 8192
+limit_time_cpu = 60
+limit_time_real = 120
+
+; Internationalization
+without_demo = False
+translate_modules = ['all']
+language = es_ES
+
+; Server-wide modules
+server_wide_modules = base,web
+
+; Email configuration (opcional)
+; email_from = noreply@orbix.com
+; smtp_server = localhost
+; smtp_port = 25
+; smtp_ssl = False
+; smtp_user = False
+; smtp_password = False
+
+; CSV import/export
+csv_internal_sep = ,

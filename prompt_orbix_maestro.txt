@@ -1,0 +1,96 @@
+
+# 🔧 PROMPT MAESTRO ORBIX AI — GitHub Copilot / Claude / ChatGPT
+
+# 🎯 OBJETIVO GENERAL:
+# Crear una plataforma empresarial lista para producción que automatiza:
+# - Validaciones crediticias vía GPT (OpenAI)
+# - Registro automático en Odoo
+# - Demos marca blanca (por subdominio)
+# - Ejecución de pruebas QA vía GPT
+# - Despliegue con Docker, NGINX, SSL y disponibilidad constante en Hetzner
+
+──────────────────────────────────────────────
+🔹 FUNCIONES CLAVE
+──────────────────────────────────────────────
+- FastAPI como backend central
+- Frontend responsivo tipo chat
+- Conexión con Odoo CRM ERP
+- Webhook a mimoto.express si se aprueba la validación
+- Validación de clientes y ejecución de pruebas vía dos GPT diferentes
+
+──────────────────────────────────────────────
+🔹 ENDPOINTS A CREAR EN FASTAPI
+──────────────────────────────────────────────
+1. `/validar_cliente` – Conecta con GPT ORBIX
+2. `/diagnostico` – Evaluación extendida con explicación
+3. `/crear_lead_odoo` – Inserta lead en Odoo vía XML-RPC
+4. `/webhook_mimoto` – Activa orden si es aprobado
+5. `/ejecutar_pruebas` – Conecta con GPT de pruebas QA
+6. `/health` – Para monitoreo por UptimeRobot
+
+──────────────────────────────────────────────
+🔹 FRONTEND – app.sistemasorbix.com
+──────────────────────────────────────────────
+- Estilo chatbot, paso a paso
+- Validaciones client-side:
+  - Nombre: 2 a 4 palabras
+  - Cédula: 9-10 dígitos
+  - Teléfono: comienza con 2, 6, 7, 8
+  - Dirección: >10 caracteres
+- Estética profesional, responsive, en colores patrios
+- Indicadores visuales y barra de progreso
+
+──────────────────────────────────────────────
+🔹 SEGURIDAD Y CONTROL DE USO
+──────────────────────────────────────────────
+- Sanitización y escape de inputs
+- Rate limiting: 100 req/min por IP
+- Headers: CSP, X-Frame-Options, HSTS
+- Detección de subdominio para controlar consumo por cliente:
+  - demo-babel: $8/mes
+  - otros: $5/mes
+- Si excede límite:
+  { "error": "Límite de uso alcanzado" }
+
+──────────────────────────────────────────────
+🔹 DESPLIEGUE COMPLETO EN HETZNER (CPX41 Ubuntu)
+──────────────────────────────────────────────
+- Usar Docker + Docker Compose
+- Archivos requeridos:
+  - `Dockerfile` → Backend con FastAPI
+  - `docker-compose.yml` → Backend, Odoo, Certbot
+  - `setup_orbix.sh` → instala Docker, NGINX, configura dominios
+  - `.env.example` → variables como:
+      OPENAI_API_KEY_ORBIX=
+      OPENAI_API_KEY_TEST=
+      ODOO_URL=
+      ODOO_DB=
+      ODOO_USER=
+      ODOO_PASS=
+
+──────────────────────────────────────────────
+🔹 API KEYS EN USO (desde .env)
+──────────────────────────────────────────────
+- GPT ORBIX: sk-proj-1060bhj_...
+- GPT PRUEBAS: sk-proj-ulKua4bX...
+
+──────────────────────────────────────────────
+🔹 SUBDOMINIOS EN USO
+──────────────────────────────────────────────
+- api.sistemasorbix.com
+- app.sistemasorbix.com
+- erp.sistemasorbix.com
+- demo-babel.sistemasorbix.com
+- dashboard.sistemasorbix.com
+
+──────────────────────────────────────────────
+🧠 INSTRUCCIÓN PARA COPILOT
+──────────────────────────────────────────────
+- Comentá todas las funciones y endpoints
+- Usá docstrings estilo Google
+- Documentá especialmente `main.py`, `index.html` y `odoo_connector.py`
+- Incluí typing para claridad
+- El resultado debe ser un sistema funcional, modular y fácil de mantener
+- El código debe estar 100% listo para entregar a equipos externos como Grupo Babel
+
+🎁 ¡Comenzá generando estructura de carpetas, archivos clave, y un README técnico básico!

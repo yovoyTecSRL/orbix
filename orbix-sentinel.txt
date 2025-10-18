@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Orbix AI - Monitor de Red y Seguridad</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      color: #58a6ff;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .card {
+      background: #161b22;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(88, 166, 255, 0.2);
+    }
+    canvas {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+    }
+    .popup {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #ff5555;
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(255, 85, 85, 0.5);
+      z-index: 9999;
+      display: none;
+    }
+    .popup button {
+      margin-top: 10px;
+      background: #0d1117;
+      color: #fff;
+      border: 1px solid #fff;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>🛡️ Orbix AI - Panel de Control del Servidor</h1>
+  <div class="grid">
+    <div class="card">
+      <h2>📊 Conexiones activas</h2>
+      <canvas id="connectionsChart"></canvas>
+    </div>
+    <div class="card">
+      <h2>🌐 Dispositivos LAN</h2>
+      <canvas id="devicesChart"></canvas>
+    </div>
+    <div class="card">
+      <h2>🚨 Alertas de riesgo</h2>
+      <canvas id="alertsChart"></canvas>
+    </div>
+    <div class="card">
+      <h2>👤 Clientes conectados</h2>
+      <canvas id="clientsChart"></canvas>
+    </div>
+  </div>
+
+  <div id="popup" class="popup">
+    <strong>⚠️ Riesgo Detectado</strong>
+    <p id="popupMessage">Conexión sospechosa detectada desde IP desconocida.</p>
+    <button onclick="dismissPopup()">Ignorar</button>
+    <button onclick="takeAction()">Tomar acción</button>
+  </div>
+
+  <script>
+    const connectionsChart = new Chart(document.getElementById("connectionsChart"), {
+      type: "line",
+      data: {
+        labels: ["00:00", "06:00", "12:00", "18:00", "Ahora"],
+        datasets: [{
+          label: "Conexiones activas",
+          data: [12, 19, 23, 18, 26],
+          borderWidth: 2
+        }]
+      },
+      options: { scales: { y: { beginAtZero: true } } }
+    });
+
+    const devicesChart = new Chart(document.getElementById("devicesChart"), {
+      type: "bar",
+      data: {
+        labels: ["Router", "Servidor", "Laptop", "Celular", "IoT"],
+        datasets: [{
+          label: "Dispositivos detectados",
+          data: [1, 1, 3, 4, 2],
+          borderWidth: 1
+        }]
+      },
+      options: { scales: { y: { beginAtZero: true } } }
+    });
+
+    const alertsChart = new Chart(document.getElementById("alertsChart"), {
+      type: "doughnut",
+      data: {
+        labels: ["Conexiones sospechosas", "IPs desconocidas", "Cambios de red"],
+        datasets: [{
+          label: "Alertas",
+          data: [2, 1, 3],
+          borderWidth: 1
+        }]
+      }
+    });
+
+    const clientsChart = new Chart(document.getElementById("clientsChart"), {
+      type: "line",
+      data: {
+        labels: ["8AM", "10AM", "12PM", "2PM", "4PM", "6PM"],
+        datasets: [{
+          label: "Clientes conectados",
+          data: [5, 8, 6, 7, 10, 9],
+          borderWidth: 2
+        }]
+      },
+      options: { scales: { y: { beginAtZero: true } } }
+    });
+
+    // Módulo de riesgo IA (simulación de entrada JSON)
+    const riesgos = [
+      {
+        titulo: "Conexión sospechosa persistente",
+        descripcion: "La IP 192.168.0.4 ha establecido múltiples conexiones con procesos del sistema.",
+        nivel: "ALTO"
+      }
+    ];
+
+    function mostrarPopup(riesgo) {
+      document.getElementById("popup").style.display = "block";
+      document.getElementById("popupMessage").innerText = `${riesgo.nivel} - ${riesgo.titulo}\n${riesgo.descripcion}`;
+    }
+
+    function dismissPopup() {
+      document.getElementById("popup").style.display = "none";
+    }
+
+    function takeAction() {
+      alert("🔧 Acción sugerida ejecutada: Bloqueo manual o revisión en Odoo");
+      dismissPopup();
+    }
+
+    // Mostrar popup si hay riesgos simulados
+    if (riesgos.length > 0) {
+      mostrarPopup(riesgos[0]);
+    }
+  </script>
+</body>
+</html>

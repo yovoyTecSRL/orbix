@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Datos de prueba para testing con Babel -->
+        <record id="test_visa_valid" model="orbix.payment.validation">
+            <field name="card_number">4532015112830366</field>
+            <field name="expiry_month">12</field>
+            <field name="expiry_year">2027</field>
+            <field name="cvv">123</field>
+            <field name="babel_tester">Test User</field>
+            <field name="test_notes">Tarjeta Visa válida para testing</field>
+        </record>
+
+        <record id="test_mastercard_valid" model="orbix.payment.validation">
+            <field name="card_number">5555555555554444</field>
+            <field name="expiry_month">06</field>
+            <field name="expiry_year">2026</field>
+            <field name="cvv">456</field>
+            <field name="babel_tester">Test User</field>
+            <field name="test_notes">Tarjeta MasterCard válida para testing</field>
+        </record>
+
+        <record id="test_amex_valid" model="orbix.payment.validation">
+            <field name="card_number">378282246310005</field>
+            <field name="expiry_month">03</field>
+            <field name="expiry_year">2025</field>
+            <field name="cvv">1234</field>
+            <field name="babel_tester">Test User</field>
+            <field name="test_notes">Tarjeta American Express válida para testing</field>
+        </record>
+
+        <record id="test_visa_expired" model="orbix.payment.validation">
+            <field name="card_number">4000000000000002</field>
+            <field name="expiry_month">01</field>
+            <field name="expiry_year">2020</field>
+            <field name="cvv">789</field>
+            <field name="babel_tester">Test User</field>
+            <field name="test_notes">Tarjeta expirada para testing de validación</field>
+        </record>
+
+        <record id="test_invalid_luhn" model="orbix.payment.validation">
+            <field name="card_number">4532015112830367</field>
+            <field name="expiry_month">12</field>
+            <field name="expiry_year">2027</field>
+            <field name="cvv">123</field>
+            <field name="babel_tester">Test User</field>
+            <field name="test_notes">Tarjeta con falla en validación Luhn</field>
+        </record>
+    </data>
+</odoo>
